@@ -40,9 +40,9 @@ cd phonk_racer
 
 ## Usage
 
-To start the game, simply run the main.py script:
+To start the game, simply run the project.py script:
 ```sh
-python main.py
+python project.py
 ```
 
 ## Game Controls
