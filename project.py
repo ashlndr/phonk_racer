@@ -1,3 +1,4 @@
+import os
 import random
 from typing import Optional, Tuple
 
@@ -12,6 +13,7 @@ class MovableObject:
     :param y: y coordinate of an object.
     :param speed: value, by which object y coordinate will be changing.
     """
+
     def __init__(self, x: int, y: int, speed: int) -> None:
         self.obj = None
         self.x = x
@@ -38,6 +40,7 @@ class Car(MovableObject):
     :param speed: car speed.
     :param rotate: indicates if a car image should be rotated by 180 degrees for enemy cars.
     """
+
     def __init__(self, x: int, y: int, color: str, speed=0, rotate=False) -> None:
         super().__init__(x, y, speed)
         self.skin = pygame.image.load(os.path.join(CAR_SKINS_DIR, color))
@@ -54,12 +57,17 @@ class RoadObjects(MovableObject):
     :type obj_img: Surface type, a pygame object for representing images.
     :param speed: value, by which object y coordinate will be changing.
     """
+
     def __init__(self, x: int, y: int, obj_img: pygame.surface.Surface, speed=OBJ_SPEED) -> None:
         super().__init__(x, y, speed)
         self.obj_img = obj_img
         self.obj = pygame.transform.scale(self.obj_img, OBJ_SIZE)
 
-    def respawn(self, x_range: Optional[Tuple[int, int, int]], y_range: Optional[Tuple[int, int, int]]) -> None:
+    def respawn(
+        self,
+        x_range: Optional[Tuple[int, int, int]],
+        y_range: Optional[Tuple[int, int, int]],
+    ) -> None:
         """Renew object coordinates.
         :param x_range: a tuple with start, stop and step values for x random.randrange.
         :param y_range: a tuple with start, stop and step values for y random.randrange.
@@ -72,17 +80,22 @@ class RoadObjects(MovableObject):
 
 class Game:
     """Main class for running game."""
+
     def __init__(self) -> None:
         """Initialize all game assets and objects."""
         pygame.init()
         pygame.display.set_caption(TITLE)
         pygame.mixer.init()
-        pygame.mixer.music.load(os.path.join(SOUNDS_DIR, 'soundtrack.mp3'))
+        pygame.mixer.music.load(os.path.join(SOUNDS_DIR, "soundtrack.mp3"))
         pygame.mixer.music.play(loops=-1, fade_ms=200)
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
         self.clock = pygame.time.Clock()
-        self.road_img = pygame.image.load(os.path.join(ROAD_SKINS_DIR, 'road.png'))
-        self.player_car = Car(SCREEN_WIDTH // 2 - CAR_WIDTH // 2, SCREEN_HEIGHT - 2 * CAR_HEIGHT, PLAYER_CAR)
+        self.road_img = pygame.image.load(os.path.join(ROAD_SKINS_DIR, "road.png"))
+        self.player_car = Car(
+            SCREEN_WIDTH // 2 - CAR_WIDTH // 2,
+            SCREEN_HEIGHT - 2 * CAR_HEIGHT,
+            PLAYER_CAR,
+        )
         self.enemy_cars = []
         self.trees = []
         self.cracks = []
@@ -115,7 +128,11 @@ class Game:
 
     def reset_game(self) -> None:
         """Reset score and cars at initial values."""
-        self.player_car = Car(SCREEN_WIDTH // 2 - CAR_WIDTH // 2, SCREEN_HEIGHT - 2 * CAR_HEIGHT, PLAYER_CAR)
+        self.player_car = Car(
+            SCREEN_WIDTH // 2 - CAR_WIDTH // 2,
+            SCREEN_HEIGHT - 2 * CAR_HEIGHT,
+            PLAYER_CAR,
+        )
         self.enemy_cars = []
         self.score = 0
         self.game_over = False
@@ -141,20 +158,23 @@ class Game:
     def handle_game_over(self) -> None:
         """Paint game over text with current score in case of cars collision."""
         game_over_font = pygame.font.SysFont(GAME_OVER_FONT, 60)
-        game_over_text = game_over_font.render(f'GAME OVER: {self.score}', True, WHITE_COLOR)
+        game_over_text = game_over_font.render(f"GAME OVER: {self.score}", True, WHITE_COLOR)
         game_over_rect = game_over_text.get_rect(center=self.screen.get_rect().center)
         self.screen.blit(game_over_text, game_over_rect)
         restart_font = pygame.font.SysFont(GAME_OVER_FONT, 40)
-        restart_text = restart_font.render('Press R to restart', True, WHITE_COLOR)
+        restart_text = restart_font.render("Press R to restart", True, WHITE_COLOR)
         restart_rect = restart_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50))
         self.screen.blit(restart_text, restart_rect)
 
     def generate_trees(self) -> None:
         """Populate a list of trees to paint on screen."""
         while len(self.trees) < N_TREES * 2:
-            obj_img = pygame.image.load(os.path.join(TREES_DIR, 'tree.png'))
+            obj_img = pygame.image.load(os.path.join(TREES_DIR, "tree.png"))
             rand_x_range = (0, random.randrange(-100, SCREEN_HEIGHT, 2 * OBJ_HEIGHT))
-            rand_y_rang = (SCREEN_WIDTH - 50, random.randrange(-100, SCREEN_HEIGHT, 2 * OBJ_HEIGHT))
+            rand_y_rang = (
+                SCREEN_WIDTH - 50,
+                random.randrange(-100, SCREEN_HEIGHT, 2 * OBJ_HEIGHT),
+            )
             positions = [rand_x_range, rand_y_rang]
             for pos in positions:
                 self.trees.append(RoadObjects(pos[0], pos[1], obj_img))
@@ -245,5 +265,5 @@ def main() -> None:
     Game().play()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
